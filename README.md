@@ -7,13 +7,6 @@ resolves it, AI drafts a knowledge article from that resolution, a human approve
 and the article is immediately searchable for the next incident. Every resolved
 ticket makes the next one faster — that loop is the entire product.
 
-> **Screenshot/GIF:** not included — this was built in a headless session without a
-> way to capture the browser pane. Every step of the demo script below **was**
-> verified live end-to-end (real triage, a real grounded citation, real KB
-> synthesis, real storm clustering) against a live Gemini key partway through this
-> build — see [Known limitations](#known-limitations) for exactly what that
-> covered.
-
 ## Quick start
 
 ```bash
