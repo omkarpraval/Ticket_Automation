@@ -1,0 +1,16 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+node_modules/
+dist/
+build/
+api/app/seed/data/
+*.egg-info/
+.pytest_cache/
+web/.env
+
+# Local dev-machine-only helper scripts (hardcoded paths, not part of the app)
+/install-pgvector.ps1
+/reset-postgres-and-setup.ps1

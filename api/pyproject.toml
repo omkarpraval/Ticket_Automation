@@ -1,0 +1,26 @@
+[project]
+name = "helix-api"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.2",
+    "alembic>=1.14",
+    "pydantic[email]>=2.9",
+    "pydantic-settings>=2.6",
+    "python-jose[cryptography]>=3.3",
+    "passlib[bcrypt]>=1.7",
+    "bcrypt==4.0.1",
+    "pgvector>=0.3.6",
+    "google-genai>=1.2.0",
+    "huggingface_hub>=0.26",
+    "pandas>=2.2",
+    "python-multipart>=0.0.12",
+    "sse-starlette>=2.1",
+    "tenacity>=9.0",
+]
+
+[tool.setuptools]
+packages = ["app"]

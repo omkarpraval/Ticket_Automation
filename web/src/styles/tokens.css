@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/* Design tokens for Helix's instrument-panel console. Every color used anywhere in
+   the app is defined here - nothing hardcoded elsewhere. Priority colors are used
+   ONLY to encode priority, never decoratively. */
+:root {
+  --surface-0: #0a0d13; /* page background */
+  --surface-1: #10141d; /* panel background */
+  --surface-2: #171c28; /* elevated: hover, popover, modal */
+  --surface-3: #1e2432; /* active/selected row */
+  --border: #242b3a;
+  --border-strong: #323a4d;
+
+  --text-primary: #e7eaf1;
+  --text-secondary: #9aa4b8;
+  --text-muted: #626b7d;
+
+  --accent: #4fa6e8;
+  --accent-dim: #2c4a63;
+  --accent-fg: #04121e;
+
+  --danger: #ef4d4d;
+  --success: #3fb977;
+
+  --p1: #ef4d4d;
+  --p2: #e8a23c;
+  --p3: #4f8ce8;
+  --p4: #7c8698;
+
+  --font-ui: -apple-system, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "SFMono-Regular", "JetBrains Mono", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+@theme {
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-accent: var(--accent);
+  --color-accent-dim: var(--accent-dim);
+  --color-accent-fg: var(--accent-fg);
+
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  --color-p1: var(--p1);
+  --color-p2: var(--p2);
+  --color-p3: var(--p3);
+  --color-p4: var(--p4);
+
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-mono);
+
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 6px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent-dim);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 5px;
+}
