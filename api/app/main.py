@@ -10,9 +10,10 @@ from app.routers import ai, auth, incidents, kb, problems
 app = FastAPI(title="Helix", version="0.1.0")
 
 app.add_middleware(
+    # Auth is a Bearer token in the Authorization header, not a cookie, so
+    # allow_credentials is unnecessary here - a wildcard origin is enough.
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
