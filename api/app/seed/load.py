@@ -18,6 +18,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from huggingface_hub import hf_hub_download
 from sqlalchemy import func, select
 
 from app.auth import hash_password
@@ -42,9 +43,31 @@ from app.services.correlation import detect_storm
 from app.services.embeddings import embed_texts
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger("helix.seed")
 
 DATA_DIR = Path(__file__).parent / "data"
+DATASET_REPO = "mindweave/help-desk-tickets"
+DATASET_FILES = ["tickets.csv", "categories.csv", "agents.csv", "comments.csv"]
+
+
+def _ensure_dataset_downloaded() -> None:
+    """Downloads the free HuggingFace sample CSVs into DATA_DIR if not already
+    cached there. DATA_DIR is gitignored, so this runs on every fresh clone."""
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+    missing = [f for f in DATASET_FILES if not (DATA_DIR / f).exists()]
+    if not missing:
+        logger.info("dataset: all %d CSVs already cached in %s", len(DATASET_FILES), DATA_DIR)
+        return
+
+    logger.info("dataset: downloading %d missing file(s) from %s", len(missing), DATASET_REPO)
+    for filename in missing:
+        downloaded_path = hf_hub_download(
+            repo_id=DATASET_REPO, repo_type="dataset", filename=f"data/{filename}"
+        )
+        (DATA_DIR / filename).write_bytes(Path(downloaded_path).read_bytes())
+    logger.info("dataset: download complete")
+
 
 STATUS_MAP = {
     "resolved": IncidentStatus.resolved,
@@ -333,6 +356,8 @@ async def seed_storm_cluster(db, provider, category_by_csv_id: dict[str, Categor
 
 
 async def main() -> None:
+    _ensure_dataset_downloaded()
+
     provider = get_ai_provider()
     if not settings.ai_enabled:
         logger.warning("GEMINI_API_KEY not set - seeding will proceed without embeddings (lexical search only)")
