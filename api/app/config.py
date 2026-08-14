@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://helix:helix@db:5432/helix"
 
     gemini_api_key: str = ""
-    gemini_chat_model: str = "gemini-3.5-flash"
+    gemini_chat_model: str = "gemini-flash-latest"
     gemini_embed_model: str = "gemini-embedding-2"
     embedding_dim: int = 768
 

@@ -117,9 +117,15 @@ async def eval_triage_accuracy(db, provider, held_out: list[Incident]) -> dict:
     correct = 0
     confusions = []
     scored = 0
-    for incident in held_out:
+    for i, incident in enumerate(held_out):
         if incident.category is None:
             continue
+        if i > 0:
+            # 25 back-to-back triage calls can exceed a free-tier key's per-minute
+            # quota faster than the provider's own retry/backoff can absorb -
+            # pacing calls here keeps a RATE_LIMITED run of 24 from looking like a
+            # real accuracy problem.
+            await asyncio.sleep(4)
         scored += 1
         try:
             proposal = await run_triage(db, incident, provider)

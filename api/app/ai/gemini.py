@@ -25,9 +25,13 @@ class GeminiProvider:
         self._client = genai.Client(api_key=settings.gemini_api_key)
 
     @retry(
-        retry=retry_if_exception_type(ProviderRateLimited),
+        # ProviderUnavailable is retried too, not just rate limits: Gemini returns a
+        # plain 503 "model is currently experiencing high demand" for transient
+        # overload, observed in practice to be common and to clear within a couple
+        # of retries - worth the wasted attempt on the rarer permanent failure case.
+        retry=retry_if_exception_type((ProviderRateLimited, ProviderUnavailable)),
         wait=wait_random_exponential(multiplier=1, max=20),
-        stop=stop_after_attempt(3),
+        stop=stop_after_attempt(5),
         reraise=True,
     )
     async def complete_json(self, *, prompt: str, schema: dict, temperature: float) -> ProviderResult:
@@ -47,9 +51,9 @@ class GeminiProvider:
         return self._to_result(response, start)
 
     @retry(
-        retry=retry_if_exception_type(ProviderRateLimited),
+        retry=retry_if_exception_type((ProviderRateLimited, ProviderUnavailable)),
         wait=wait_random_exponential(multiplier=1, max=20),
-        stop=stop_after_attempt(3),
+        stop=stop_after_attempt(5),
         reraise=True,
     )
     async def complete_text(self, *, prompt: str, temperature: float) -> ProviderResult:
@@ -65,7 +69,7 @@ class GeminiProvider:
         return self._to_result(response, start)
 
     @retry(
-        retry=retry_if_exception_type(ProviderRateLimited),
+        retry=retry_if_exception_type((ProviderRateLimited, ProviderUnavailable)),
         wait=wait_random_exponential(multiplier=1, max=20),
         stop=stop_after_attempt(5),
         reraise=True,

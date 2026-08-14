@@ -75,12 +75,24 @@ running this on a machine with Docker - the local setup was purely to get real
 end-to-end verification during development. See the README's "running without Docker"
 notes for exactly what was reproduced this way.
 
-**No live GEMINI_API_KEY during this build.** Every AI-independent path (auth, CRUD,
-validation, optimistic concurrency, the abstain guardrail itself, hybrid retrieval,
-KB browsing, the "Why this?" drawer, error envelopes) was exercised end-to-end
-against a live Postgres and a live browser. The AI-dependent paths (triage output,
-a real grounded answer with citations, KB synthesis, storm auto-clustering) are
-implemented, schema-validated, and covered by the eval harness's code paths, but
-were not observed producing a live model response. This is the single biggest
-honesty caveat in this submission - flagged here and in the README rather than
-glossed over.
+**No GEMINI_API_KEY for most of this build, then a real one partway through.**
+Every AI-independent path (auth, CRUD, validation, optimistic concurrency, the
+abstain guardrail itself, hybrid retrieval, KB browsing, error envelopes) was
+exercised end-to-end against a live Postgres and a live browser before any key
+existed. A real key was added later and used to verify every AI-dependent path live:
+real triage output, a real grounded answer citing a genuine past incident, a real
+AI-drafted KB article from a resolution note, publishing it, a *new* incident
+worded differently getting answered by citing that same article minutes later, and
+real storm clustering with an AI-written summary. That's the full demo script,
+confirmed working end to end, not just implemented.
+
+**The key turned out to be capacity-constrained, and that shaped two changes.**
+`gemini-3.5-flash` (current per docs at build time) returned a persistent `503`
+"experiencing high demand" for structured-output calls; `gemini-flash-latest`
+worked - default model switched (see `.env.example`). Separately, a handful of
+single calls needed 2-3 retries to succeed even with backoff, and running the eval
+harness's 25 back-to-back triage calls with no pacing burned through the key's
+per-minute quota (24/25 came back `RATE_LIMITED`, which is the app correctly
+protecting itself, not an accuracy problem) - fixed by adding a 4s pace between eval
+calls. Both are now baked into the code (`app/ai/gemini.py`'s retry now covers 503s,
+not just 429s; `eval/run_eval.py` paces triage calls), not just noted as caveats.
